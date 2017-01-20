@@ -1,0 +1,9 @@
+.DS*
+.*~
+*~
+
+xcuserdata/
+xcshareddata/
+
+bin/*
+!bin/data/
