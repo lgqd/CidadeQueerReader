@@ -1,13 +1,17 @@
 #include "Quadrant.h"
 #include "ofGraphics.h"
 
-Quadrant::Quadrant() {
+Quadrant::Quadrant(const ofVec2f& _offset, const ofVec2f& _range) {
     dragging = -1;
-    ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+    isRegisterred = false;
+    setup(_offset, _range);
 }
 
 Quadrant::~Quadrant() {
-    ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+    if(isRegisterred) {
+        ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+        isRegisterred = false;
+    }
 }
 
 void Quadrant::setup(const ofVec2f& _offset, const ofVec2f& _range) {
@@ -30,6 +34,11 @@ void Quadrant::setup(const ofVec2f& _offset, const ofVec2f& _range) {
 }
 
 void Quadrant::draw() {
+    if(!isRegisterred) {
+        ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+        isRegisterred = true;
+    }
+
     ofSetColor(64);
     ofDrawLine(corners.at(0), corners.at(1));
     ofDrawLine(corners.at(0), corners.at(2));

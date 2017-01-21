@@ -3,8 +3,7 @@
 void ofApp::setup() {
     ofBackground(200);
     mFont.load("arial.ttf", 600, true, true, true);
-    mQuad.setup(ofVec2f(0,0), ofVec2f(650,300));
-    mQuad1.setup(ofVec2f(0,300), ofVec2f(650,400));
+    mGrid.setup(ofVec2f(0,14), ofVec2f(620,650), ofVec2f(4,4));
 
     originalPolylines = mFont.getCharacterAsPoints('Q').getOutline();
     warpedPolylines = mFont.getCharacterAsPoints('Q').getOutline();
@@ -28,16 +27,14 @@ void ofApp::draw() {
             ofDrawCircle(warpedPolylines[i][j], 3);
         }
     }
-
-    mQuad.draw();
-    mQuad1.draw();
+    mGrid.draw();
 }
 
 void ofApp::mouseReleased(int x, int y, int button) {
     for(int i=0; i<originalPolylines.size(); ++i) {
         for(int j=0; j<originalPolylines[i].size(); j++) {
-            warpedPolylines[i][j].set(mQuad.warpPoint(originalPolylines[i][j]));
-            warpedPolylines[i][j].set(mQuad1.warpPoint(warpedPolylines[i][j]));
+            //warpedPolylines[i][j].set(mQuad.warpPoint(originalPolylines[i][j]));
+            //warpedPolylines[i][j].set(mQuad1.warpPoint(warpedPolylines[i][j]));
         }
     }
 }

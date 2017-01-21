@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "Quadrant.h"
+#include "Grid.h"
 
 class ofApp : public ofBaseApp{
 	public:
@@ -14,8 +15,7 @@ class ofApp : public ofBaseApp{
 		void mouseDragged(int x, int y, int button);
     private:
         ofTrueTypeFont mFont;
-        Quadrant mQuad;
-        Quadrant mQuad1;
+        Grid mGrid;
         vector<ofPolyline> originalPolylines;
         vector<ofPolyline> warpedPolylines;
 };

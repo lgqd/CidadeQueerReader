@@ -5,8 +5,8 @@
 
 class Quadrant {
     public:
-        Quadrant();
         ~Quadrant();
+        Quadrant(const ofVec2f& _offset, const ofVec2f& _range);
         void setup(const ofVec2f& _offset, const ofVec2f& _range);
         bool has(const ofVec2f& point);
         ofVec2f warpPoint(const ofVec2f& _point);
@@ -22,6 +22,7 @@ class Quadrant {
         ofVec2f offset;
         ofVec2f range;
         int dragging;
+        bool isRegisterred;
         std::vector<ofVec2f> corners;
         std::vector<ofVec2f> normalizedCorners;
         std::vector<float> warpParameters;
