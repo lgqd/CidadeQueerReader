@@ -9,8 +9,7 @@ class Grid {
         ~Grid();
         void setup(ofVec2f _offset, ofVec2f _range, ofVec2f _numElements);
         void draw();
-        void warp();
+        ofVec2f warpPoint(const ofVec2f& _point);
     private:
-        void addQuadrant(Quadrant& _quad);
         std::vector<Quadrant> quads;
 };

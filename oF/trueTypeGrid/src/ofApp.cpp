@@ -33,8 +33,7 @@ void ofApp::draw() {
 void ofApp::mouseReleased(int x, int y, int button) {
     for(int i=0; i<originalPolylines.size(); ++i) {
         for(int j=0; j<originalPolylines[i].size(); j++) {
-            //warpedPolylines[i][j].set(mQuad.warpPoint(originalPolylines[i][j]));
-            //warpedPolylines[i][j].set(mQuad1.warpPoint(warpedPolylines[i][j]));
+            warpedPolylines[i][j].set(mGrid.warpPoint(originalPolylines[i][j]));
         }
     }
 }
