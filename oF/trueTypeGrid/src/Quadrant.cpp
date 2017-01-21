@@ -1,6 +1,14 @@
 #include "Quadrant.h"
+#include "ofGraphics.h"
 
-Quadrant::Quadrant() {}
+Quadrant::Quadrant() {
+    dragging = -1;
+    ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+}
+
+Quadrant::~Quadrant() {
+    ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+}
 
 void Quadrant::setup(const ofVec2f& _offset, const ofVec2f& _range) {
     offset.set(_offset);
@@ -21,16 +29,21 @@ void Quadrant::setup(const ofVec2f& _offset, const ofVec2f& _range) {
     calculateWarpParameters();
 }
 
-bool Quadrant::has(const ofVec2f& point) {
-    return (point.x >= offset.x) && (point.y >= offset.y) && (point.x <= (offset.x + range.x)) && (point.y <= (offset.y + range.y));
+void Quadrant::draw() {
+    ofSetColor(64);
+    ofDrawLine(corners.at(0), corners.at(1));
+    ofDrawLine(corners.at(0), corners.at(2));
+    ofDrawLine(corners.at(3), corners.at(1));
+    ofDrawLine(corners.at(3), corners.at(2));
+
+    ofSetColor(200,100,100);
+    for (int i=0; i<corners.size(); ++i) {
+        ofDrawCircle(corners.at(i), 10);
+    }
 }
 
-void Quadrant::setCorners(std::vector<ofVec2f>& _corners) {
-    for(int i=0; i<_corners.size() && i<4; ++i) {
-        corners.at(i).set(_corners.at(i));
-        normalizedCorners.at(i).set(normalizeCorner(_corners.at(i)));
-    }
-    calculateWarpParameters();
+bool Quadrant::has(const ofVec2f& point) {
+    return (point.x >= offset.x) && (point.y >= offset.y) && (point.x <= (offset.x + range.x)) && (point.y <= (offset.y + range.y));
 }
 
 ofVec2f Quadrant::normalizeCorner(ofVec2f& _corner) {
@@ -70,3 +83,28 @@ ofVec2f Quadrant::warpPoint(const ofVec2f& _point) {
         return ofVec2f(ofVec2f(nX, nY) * range + offset);
     }
 }
+
+void Quadrant::mousePressed(ofMouseEventArgs & args) {
+    for(int i=0; i<corners.size(); ++i) {
+        if(corners.at(i).squareDistance(ofVec2f(args.x,args.y)) < 32.0f) {
+            dragging = i;
+        }
+    }
+}
+
+void Quadrant::mouseDragged(ofMouseEventArgs & args) {
+    if((dragging > -1) && (dragging < 4)) {
+        corners.at(dragging).set(args.x,args.y);
+        normalizedCorners.at(dragging).set(normalizeCorner(corners.at(dragging)));
+    }
+}
+
+void Quadrant::mouseReleased(ofMouseEventArgs & args) {
+    calculateWarpParameters();
+    dragging = -1;
+}
+
+void Quadrant::mouseMoved(ofMouseEventArgs & args) {}
+void Quadrant::mouseScrolled(ofMouseEventArgs & args) {}
+void Quadrant::mouseEntered(ofMouseEventArgs & args) {}
+void Quadrant::mouseExited(ofMouseEventArgs & args) {}
