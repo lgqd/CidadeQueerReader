@@ -3,10 +3,14 @@
 void ofApp::setup() {
     ofBackground(200);
     mFont.load("arial.ttf", 600, true, true, true);
-    mGrid.setup(ofVec2f(0,14), ofVec2f(620,650), ofVec2f(4,4));
 
-    originalPolylines = mFont.getCharacterAsPoints('Q').getOutline();
-    warpedPolylines = mFont.getCharacterAsPoints('Q').getOutline();
+    drawGrid = true;
+    mChar = 'U';
+
+    mGrid.setup(ofVec2f(20,14), ofVec2f(600,650), ofVec2f(4,4));
+
+    originalPolylines = mFont.getCharacterAsPoints(mChar).getOutline();
+    warpedPolylines = mFont.getCharacterAsPoints(mChar).getOutline();
     for(int i=0; i<originalPolylines.size(); ++i) {
         for(int j=0; j<originalPolylines[i].size(); j++) {
             originalPolylines[i][j].y += 600;
@@ -19,15 +23,21 @@ void ofApp::update() {}
 
 void ofApp::draw() {
     ofSetColor(255);
-    mFont.drawString("Q", 0,600);
+    mFont.drawString(ofToString(mChar), 0,600);
 
     ofSetColor(200, 32, 32);
+    ofBeginShape();
     for(int i=0; i<warpedPolylines.size(); ++i) {
-        for(int j=0; j<warpedPolylines[i].size(); j++) {
-            ofDrawCircle(warpedPolylines[i][j], 3);
+        warpedPolylines[i].close();
+        for(int j=0; j<warpedPolylines[i].getVertices().size(); j++) {
+            ofVertex(warpedPolylines[i].getVertices().at(j).x, warpedPolylines[i].getVertices().at(j).y);
         }
     }
-    mGrid.draw();
+    ofEndShape();
+
+    if(drawGrid) {
+        mGrid.draw();
+    }
 }
 
 void ofApp::mouseReleased(int x, int y, int button) {
@@ -38,6 +48,11 @@ void ofApp::mouseReleased(int x, int y, int button) {
     }
 }
 
-void ofApp::keyReleased(int key){}
+void ofApp::keyReleased(int key) {
+    if(key == ' ') {
+        drawGrid = !drawGrid;
+    }
+}
+
 void ofApp::mouseDragged(int x, int y, int button){}
 void ofApp::mousePressed(int x, int y, int button){}

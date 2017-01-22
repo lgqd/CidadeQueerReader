@@ -16,6 +16,8 @@ class ofApp : public ofBaseApp{
     private:
         ofTrueTypeFont mFont;
         Grid mGrid;
+        bool drawGrid;
+        char mChar;
         vector<ofPolyline> originalPolylines;
         vector<ofPolyline> warpedPolylines;
 };
