@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>Search</title>
+
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
+    <script>
+      var map;
+      var infoWindow;
+      var service;
+      var kuir = [
+        /*'marginal', 'imigrante',*/
+        'estranho', 'divergente', 'disruptor', 'perturbador', 'menor', 'cuír', 'ativista', 'libertino', 'apartado', 'inoportuno', 'torto', 'desavergonhado', 'alheio', 'meliante', 'degenerado', 'inquietante', 'impertinente', 'esquivo', 'ermo', 'singular', 'assaltante', 'desviante', 'diferente', 'invertido', 'esquisito', 'irreconhecível', 'anômalo', 'anormal', 'atípico', 'bizarro', 'defeituoso', 'deformado', 'desviado', 'duvidoso', 'errado', 'esdrúxulo', 'estapafúrdio', 'estrangeiro', 'estropiado', 'excêntrico', 'excepcional', 'exótico', 'extraordinário', 'extravagante', 'grosseiro', 'imperfeito', 'inabitual', 'incomum', 'indecente', 'infrequente', 'intruso', 'irregular', 'mal-acabado', 'oblíquo', 'refugiado', 'sem-vergonha', 'tosco', 'traiçoeiro', 'transviado', 'vagabundo'
+      ];
+      var kuirLocations = [];
+
+      function initMap() {
+        var sp = {lat: -23.551, lng: -46.633};
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: sp,
+          zoom: 13
+        });
+        
+        var service = new google.maps.places.PlacesService(map);
+        for(var i=0; i<kuir.length; i++){
+          setTimeout(function(ind){
+            return function(){
+              service.textSearch({
+                location: sp,
+                radius: 5000,
+                query: kuir[ind],
+                type: ['store'] // cafe(20) || store(63) || art_gallery(100)
+              }, function(results, status) {
+                if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                  console.log(kuir[ind]+': '+status);
+                  return;
+                }
+                console.log(kuir[ind]+': '+results.length);
+                for (var j = 0; j < results.length; j++) {
+                  kuirLocations.push(results[j]);
+                }
+              });
+            };
+          }(i), 500*i);
+        }
+      }
+
+      function processResults(results) {
+        var projection = map.getProjection();
+        var bounds = map.getBounds();
+        var topRight = projection.fromLatLngToPoint(bounds.getNorthEast());
+        var bottomLeft = projection.fromLatLngToPoint(bounds.getSouthWest());
+        var scale = Math.pow(2, map.getZoom());
+
+        for (var i = 0, result; result = results[i]; i++) {
+          var thisPoint = projection.fromLatLngToPoint(result.geometry.location);
+          var xy = {};
+          xy['x'] = Math.floor((thisPoint.x - bottomLeft.x) * scale);
+          xy['y'] = Math.floor((thisPoint.y - topRight.y) * scale);
+
+          console.log("mPoints.add(new PVector("+xy.x+","+xy.y+"));");
+
+          //console.log(result.name);
+          addMarker(result);
+        }
+      }
+
+      function addMarker(place) {
+        var marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location,
+          icon: {
+            url: 'https://developers.google.com/maps/documentation/javascript/images/circle.png',
+            anchor: new google.maps.Point(10, 10),
+            scaledSize: new google.maps.Size(20, 34)
+          }
+        });
+      }
+    </script>
+  </head>
+   <body>
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZVdTab3nTwhGZy99ZdqsXf62LbsUhpXo&callback=initMap&libraries=places,visualization" async defer></script>
+  </body>
+</html>
