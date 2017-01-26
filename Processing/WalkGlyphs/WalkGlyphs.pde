@@ -38,17 +38,11 @@ void draw() {
 void SELECTdraw() {
   background(200);
   mMap.draw(0, 0);
-
-  fill(200, 100, 100);
-  noStroke();
-  for (int i=0; i<mPoints.size(); i++) {
-    ellipse(mPoints.get(i).x, mPoints.get(i).y, 2*POINT_RADIUS, 2*POINT_RADIUS);
-  }
 }
 
 void GENERATEdraw() {
-  background(0);
-  image(mGlyph, 0, 0, width, height);
+  mMap.draw(0, 0);
+  image(mGlyph, -(mGlyph.width-width)/2, -(mGlyph.height-height)/2);
 }
 
 void generateGlyph() {
@@ -56,9 +50,9 @@ void generateGlyph() {
   mGlyph.smooth();
   mGlyph.pushMatrix();
   mGlyph.translate((mGlyph.width-width)/2, (mGlyph.height-height)/2);
-  mGlyph.background(0, 0);
+  mGlyph.background(255, 0);
   mGlyph.noFill();
-  mGlyph.stroke(255);
+  mGlyph.stroke(0);
   mGlyph.strokeWeight(15);
 
   ArrayList<PVector> somePoints = new ArrayList<PVector>();
@@ -120,7 +114,9 @@ void keyReleased() {
     }
   } else if (key == ' ') {
     if (mState == State.GENERATE) {
+      mGlyph.filter(INVERT);
       mGlyph.save(dataPath("out/"+mMap.name()+millis()+second()+".jpg"));
+      mGlyph.filter(INVERT);
     }
   }
 }
