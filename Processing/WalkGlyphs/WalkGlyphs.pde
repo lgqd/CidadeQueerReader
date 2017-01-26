@@ -21,6 +21,7 @@ void setup() {
   mMaps.add(new QueerMap("queer.png"));
   currentMap = 0;
   mMap = mMaps.get(currentMap);
+  mMap.addPoints(mPoints);
 
   mGlyph = createGraphics((int)(2*width), (int)(2*height));
   mState = State.SELECT;
@@ -48,23 +49,6 @@ void SELECTdraw() {
 void GENERATEdraw() {
   background(0);
   image(mGlyph, 0, 0, width, height);
-}
-
-void mouseReleased() {
-  if (mState == State.SELECT) {
-    SELECTmouseReleased();
-  }
-}
-
-void SELECTmouseReleased() {
-  PVector mClick = new PVector(mouseX, mouseY);
-  for (int i=0; i<mPoints.size(); i++) {
-    if (mPoints.get(i).dist(mClick) < POINT_RADIUS) {
-      mPoints.remove(i);
-      return;
-    }
-  }
-  mPoints.add(mClick);
 }
 
 void generateGlyph() {
@@ -110,13 +94,13 @@ void keyReleased() {
     if (keyCode == UP) {
       currentMap = min((currentMap + 1), (mMaps.size() - 1));
       mMap = mMaps.get(currentMap);
+      mMap.addPoints(mPoints);
       mState = State.SELECT;
-      mPoints.clear();
     } else if (keyCode == DOWN) {
       currentMap = max((currentMap - 1), 0);
       mMap = mMaps.get(currentMap);
+      mMap.addPoints(mPoints);
       mState = State.SELECT;
-      mPoints.clear();
     } else if (keyCode == LEFT || keyCode == RIGHT) {
       if (mPoints.isEmpty()) {
         mMap.addPoints(mPoints);
