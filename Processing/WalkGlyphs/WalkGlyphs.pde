@@ -54,16 +54,15 @@ void GENERATEdraw() {
 void generateGlyph() {
   mGlyph.beginDraw();
   mGlyph.smooth();
-  mGlyph.strokeCap(PROJECT);
   mGlyph.pushMatrix();
   mGlyph.translate((mGlyph.width-width)/2, (mGlyph.height-height)/2);
   mGlyph.background(0, 0);
   mGlyph.noFill();
   mGlyph.stroke(255);
-  mGlyph.strokeWeight(20);
+  mGlyph.strokeWeight(15);
 
   ArrayList<PVector> somePoints = new ArrayList<PVector>();
-  for (int i=0; i<12; i++) {
+  for (int i=0; i<10; i++) {
     somePoints.add(mPoints.get((int)random(mPoints.size())));
   }
 
@@ -77,19 +76,22 @@ void generateGlyph() {
     tPoints[3] = somePoints.get((int)random(somePoints.size()));
 
     float mR = random(1); 
-    if (mR < 0.33) {
+    if (mR < 0.25) {
       mGlyph.bezier(tPoints[0].x, tPoints[0].y, 
         tPoints[1].x, tPoints[1].y, 
         tPoints[2].x, tPoints[2].y, 
         tPoints[3].x, tPoints[3].y);
     } else if (mR < 0.5) {
       mGlyph.line(tPoints[0].x, tPoints[0].y, tPoints[1].x, tPoints[1].y);
+      mGlyph.line(tPoints[2].x, tPoints[2].y, tPoints[1].x, tPoints[1].y);
     } else if (mR < 0.75) {
       mGlyph.ellipse(tPoints[0].x, tPoints[0].y, tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2);
     } else {
+      float arcAngleStart = PVector.angleBetween(tPoints[0], tPoints[3]);
+      float arcAngleStop = arcAngleStart + random(PI/4, PI);
       mGlyph.arc(tPoints[0].x, tPoints[0].y, 
         tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2, 
-        PVector.angleBetween(tPoints[0], tPoints[3]), PVector.angleBetween(tPoints[0], tPoints[1]));
+        arcAngleStart, arcAngleStop);
     }
   }
 
