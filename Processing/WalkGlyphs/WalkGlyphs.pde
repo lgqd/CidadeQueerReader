@@ -4,24 +4,23 @@ public enum State {
 
 int POINT_RADIUS = 10;
 
-PImage mMap;
+Map mMap;
 PGraphics mGlyph;
 ArrayList<PVector> mPoints;
-ArrayList<String> mMaps;
+ArrayList<Map> mMaps;
 int currentMap;
 State mState; 
 
 void setup() {
-  size(900, 720);
+  size(1200, 680);
 
   mPoints = new ArrayList<PVector>();
-  mMaps = new ArrayList<String>();
-  mMaps.add("cidade.png");
-  mMaps.add("limpa.png");
-  mMaps.add("linda.png");
-  mMaps.add("marginal.png");
+  mMaps = new ArrayList<Map>();
+  mMaps.add(new CidadeMap("cidade.png"));
+  mMaps.add(new LindaMap("linda.png"));
+  mMaps.add(new QueerMap("queer.png"));
   currentMap = 0;
-  mMap = loadImage(mMaps.get(currentMap));
+  mMap = mMaps.get(currentMap);
 
   mGlyph = createGraphics((int)(2*width), (int)(2*height));
   mState = State.SELECT;
@@ -37,7 +36,7 @@ void draw() {
 
 void SELECTdraw() {
   background(200);
-  image(mMap, 0, 0);
+  mMap.draw(0, 0);
 
   fill(200, 100, 100);
   noStroke();
@@ -77,9 +76,8 @@ void generateGlyph() {
   mGlyph.strokeWeight(20);
   mGlyph.noFill();
 
-  int numberOfLines = (int) random(0.5*mPoints.size(), 0.75*mPoints.size());
+  int numberOfLines = (int) min(8, random(0.5*mPoints.size(), 0.75*mPoints.size()));
   for (int i=0; i<numberOfLines; i++) {
-
     PVector[] tPoints = new PVector[4];
     tPoints[0] = mPoints.get((int)random(mPoints.size()));
     tPoints[1] = mPoints.get((int)random(mPoints.size()));
@@ -92,9 +90,9 @@ void generateGlyph() {
         tPoints[1].x, tPoints[1].y, 
         tPoints[2].x, tPoints[2].y, 
         tPoints[3].x, tPoints[3].y);
-    } else if (mR < 0.5) {
+    } else if (mR < 0.66) {
       mGlyph.line(tPoints[0].x, tPoints[0].y, tPoints[1].x, tPoints[1].y);
-    } else if (mR < 0.75) {
+    } else if (mR < 0.82) {
       mGlyph.ellipse(tPoints[0].x, tPoints[0].y, tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2);
     } else {
       mGlyph.arc(tPoints[0].x, tPoints[0].y, 
@@ -111,12 +109,12 @@ void keyReleased() {
   if (key == CODED) {
     if (keyCode == UP) {
       currentMap = min((currentMap + 1), (mMaps.size() - 1));
-      mMap = loadImage(mMaps.get(currentMap));
+      mMap = mMaps.get(currentMap);
       mState = State.SELECT;
       mPoints.clear();
     } else if (keyCode == DOWN) {
       currentMap = max((currentMap - 1), 0);
-      mMap = loadImage(mMaps.get(currentMap));
+      mMap = mMaps.get(currentMap);
       mState = State.SELECT;
       mPoints.clear();
     } else if (keyCode == LEFT || keyCode == RIGHT) {
@@ -125,7 +123,11 @@ void keyReleased() {
     }
   } else if (key == ' ') {
     if (mState == State.GENERATE) {
-      mGlyph.save(dataPath("out/"+mMaps.get(currentMap).replace(".png", "")+millis()+second()+".jpg"));
+      mGlyph.save(dataPath("out/"+mMap.name()+millis()+second()+".jpg"));
+    }
+  } else if (key == 'q' || key == 'Q') {
+    if (mState == State.SELECT) {
+      mMap.addPoints(mPoints);
     }
   }
 }
