@@ -53,20 +53,28 @@ void GENERATEdraw() {
 
 void generateGlyph() {
   mGlyph.beginDraw();
+  mGlyph.smooth();
+  mGlyph.strokeCap(PROJECT);
   mGlyph.pushMatrix();
   mGlyph.translate((mGlyph.width-width)/2, (mGlyph.height-height)/2);
   mGlyph.background(0, 0);
+  mGlyph.noFill();
   mGlyph.stroke(255);
   mGlyph.strokeWeight(20);
-  mGlyph.noFill();
 
-  int numberOfLines = (int) random(5, 9);
+  ArrayList<PVector> somePoints = new ArrayList<PVector>();
+  for (int i=0; i<12; i++) {
+    somePoints.add(mPoints.get((int)random(mPoints.size())));
+  }
+
+  int numberOfLines = (int) random(0.5*somePoints.size(), 0.75*somePoints.size());
+
   for (int i=0; i<numberOfLines; i++) {
     PVector[] tPoints = new PVector[4];
-    tPoints[0] = mPoints.get((int)random(mPoints.size()));
-    tPoints[1] = mPoints.get((int)random(mPoints.size()));
-    tPoints[2] = mPoints.get((int)random(mPoints.size()));
-    tPoints[3] = mPoints.get((int)random(mPoints.size()));
+    tPoints[0] = somePoints.get((int)random(somePoints.size()));
+    tPoints[1] = somePoints.get((int)random(somePoints.size()));
+    tPoints[2] = somePoints.get((int)random(somePoints.size()));
+    tPoints[3] = somePoints.get((int)random(somePoints.size()));
 
     float mR = random(1); 
     if (mR < 0.33) {
@@ -74,9 +82,9 @@ void generateGlyph() {
         tPoints[1].x, tPoints[1].y, 
         tPoints[2].x, tPoints[2].y, 
         tPoints[3].x, tPoints[3].y);
-    } else if (mR < 0.66) {
+    } else if (mR < 0.5) {
       mGlyph.line(tPoints[0].x, tPoints[0].y, tPoints[1].x, tPoints[1].y);
-    } else if (mR < 0.82) {
+    } else if (mR < 0.75) {
       mGlyph.ellipse(tPoints[0].x, tPoints[0].y, tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2);
     } else {
       mGlyph.arc(tPoints[0].x, tPoints[0].y, 
