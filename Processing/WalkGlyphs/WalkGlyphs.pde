@@ -76,7 +76,7 @@ void generateGlyph() {
   mGlyph.strokeWeight(20);
   mGlyph.noFill();
 
-  int numberOfLines = (int) min(8, random(0.5*mPoints.size(), 0.75*mPoints.size()));
+  int numberOfLines = (int) random(5, 9);
   for (int i=0; i<numberOfLines; i++) {
     PVector[] tPoints = new PVector[4];
     tPoints[0] = mPoints.get((int)random(mPoints.size()));
@@ -118,16 +118,15 @@ void keyReleased() {
       mState = State.SELECT;
       mPoints.clear();
     } else if (keyCode == LEFT || keyCode == RIGHT) {
+      if (mPoints.isEmpty()) {
+        mMap.addPoints(mPoints);
+      }
       mState = State.GENERATE;
       generateGlyph();
     }
   } else if (key == ' ') {
     if (mState == State.GENERATE) {
       mGlyph.save(dataPath("out/"+mMap.name()+millis()+second()+".jpg"));
-    }
-  } else if (key == 'q' || key == 'Q') {
-    if (mState == State.SELECT) {
-      mMap.addPoints(mPoints);
     }
   }
 }
