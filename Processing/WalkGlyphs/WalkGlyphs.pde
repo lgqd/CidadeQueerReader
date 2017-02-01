@@ -1,15 +1,9 @@
-public enum State { 
-  SELECT, GENERATE
-}
-
-int POINT_RADIUS = 10;
-
 Map mMap;
 PGraphics mGlyph;
 ArrayList<PVector> mPoints;
 ArrayList<Map> mMaps;
 int currentMap;
-State mState; 
+
 
 void setup() {
   size(1200, 680);
@@ -24,23 +18,10 @@ void setup() {
   mMap.addPoints(mPoints);
 
   mGlyph = createGraphics((int)(2*width), (int)(2*height));
-  mState = State.SELECT;
 }
 
 void draw() {
-  if (mState == State.SELECT) {
-    SELECTdraw();
-  } else if (mState == State.GENERATE) {
-    GENERATEdraw();
-  }
-}
-
-void SELECTdraw() {
   background(200);
-  mMap.draw(0, 0);
-}
-
-void GENERATEdraw() {
   mMap.draw(0, 0);
   image(mGlyph, -(mGlyph.width-width)/2, -(mGlyph.height-height)/2);
 }
@@ -93,30 +74,32 @@ void generateGlyph() {
   mGlyph.endDraw();
 }
 
+void clearGlyph() {
+  mGlyph.beginDraw();
+  mGlyph.background(255, 0);
+  mGlyph.endDraw();
+}
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == UP) {
       currentMap = min((currentMap + 1), (mMaps.size() - 1));
       mMap = mMaps.get(currentMap);
       mMap.addPoints(mPoints);
-      mState = State.SELECT;
+      clearGlyph();
     } else if (keyCode == DOWN) {
       currentMap = max((currentMap - 1), 0);
       mMap = mMaps.get(currentMap);
       mMap.addPoints(mPoints);
-      mState = State.SELECT;
+      clearGlyph();
     } else if (keyCode == LEFT || keyCode == RIGHT) {
       if (mPoints.isEmpty()) {
         mMap.addPoints(mPoints);
       }
-      mState = State.GENERATE;
       generateGlyph();
     }
   } else if (key == ' ') {
-    if (mState == State.GENERATE) {
-      mGlyph.filter(INVERT);
-      mGlyph.save(dataPath("out/"+mMap.name()+millis()+second()+".jpg"));
-      mGlyph.filter(INVERT);
-    }
+    mGlyph.filter(INVERT);
+    mGlyph.save(dataPath("out/"+mMap.name()+millis()+second()+".jpg"));
+    mGlyph.filter(INVERT);
   }
 }
