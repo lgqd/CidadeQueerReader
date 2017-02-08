@@ -1,9 +1,10 @@
+int POINT_RADIUS = 8;
+
 Map mMap;
 PGraphics mGlyph;
 ArrayList<PVector> mPoints;
 ArrayList<Map> mMaps;
 int currentMap;
-
 
 void setup() {
   size(1200, 680);
@@ -13,6 +14,7 @@ void setup() {
   mMaps.add(new CidadeMap("cidade.png"));
   mMaps.add(new LindaMap("linda.png"));
   mMaps.add(new QueerMap("queer.png"));
+  mMaps.add(new BlankMap("blank.png"));
   currentMap = 0;
   mMap = mMaps.get(currentMap);
   mMap.addPoints(mPoints);
@@ -23,6 +25,13 @@ void setup() {
 void draw() {
   background(200);
   mMap.draw(0, 0);
+
+  fill(200, 100, 100);
+  noStroke();
+  for (int i=0; i<mPoints.size(); i++) {
+    ellipse(mPoints.get(i).x, mPoints.get(i).y, 2*POINT_RADIUS, 2*POINT_RADIUS);
+  }
+
   image(mGlyph, -(mGlyph.width-width)/2, -(mGlyph.height-height)/2);
 }
 
@@ -34,10 +43,10 @@ void generateGlyph() {
   mGlyph.background(255, 0);
   mGlyph.noFill();
   mGlyph.stroke(0);
-  mGlyph.strokeWeight(15);
+  mGlyph.strokeWeight(8);
 
   ArrayList<PVector> somePoints = new ArrayList<PVector>();
-  for (int i=0; i<10; i++) {
+  for (int i=0; i<10 && mPoints.size()>0; i++) {
     somePoints.add(mPoints.get((int)random(mPoints.size())));
   }
 
@@ -72,6 +81,17 @@ void generateGlyph() {
 
   mGlyph.popMatrix();
   mGlyph.endDraw();
+}
+
+void mouseReleased() {
+  PVector mClick = new PVector(mouseX, mouseY);
+  for (int i=0; i<mPoints.size(); i++) {
+    if (mPoints.get(i).dist(mClick) < POINT_RADIUS) {
+      mPoints.remove(i);
+      return;
+    }
+  }
+  mPoints.add(mClick);
 }
 
 void clearGlyph() {

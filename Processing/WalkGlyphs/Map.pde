@@ -4,6 +4,28 @@ public interface Map {
   String name();
 }
 
+public class BlankMap implements Map {
+  private PImage mImg;
+  private String mName;
+
+  public BlankMap(String imageFilename) {
+    mImg = loadImage(imageFilename);
+    mName = imageFilename.replace(".png", "");
+  }
+
+  public void draw(float _x, float _y) {
+    image(mImg, _x, _y);
+  }
+
+  public String name() {
+    return mName;
+  }
+
+  public void addPoints(ArrayList<PVector> _mPoints) {
+    _mPoints.clear();
+  }
+}
+
 public class CidadeMap implements Map {
   private PImage mImg;
   private String mName;
