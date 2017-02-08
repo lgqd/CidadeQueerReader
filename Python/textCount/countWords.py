@@ -23,12 +23,11 @@ def printCounts(mCounts, limit):
   for filename,words in mCounts.iteritems():
     print filename
     sorted_words = sorted(words.items(), key=operator.itemgetter(1), reverse=True)
-    i = 0 
-    for w,c in sorted_words:
+
+    for i,(w,c) in enumerate(sorted_words):
       if len(w) > 1:
         print ("  "+w+": "+str(c)).decode('utf8')
-        i += 1
-      if i > limit:
+      if i >= limit:
         break
 
 if __name__ == "__main__":
@@ -40,7 +39,7 @@ if __name__ == "__main__":
 
     with open(fullPath) as txt:
       for line in txt.read().splitlines():
-        line = sub(r'[.!?@-]+', '', line)
+        line = sub(r'[.!?@()+-]+', '', line)
 
         for (w0,w1,w2) in triowise(line.split()):
           singlet = w0.lower()
