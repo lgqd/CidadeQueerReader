@@ -1,5 +1,7 @@
 .DS*
 imgs/
+docs/
 data/out
 data
 !bin/data
+Python/**/out.txt
