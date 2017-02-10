@@ -1,4 +1,4 @@
-int POINT_RADIUS = 8;
+int POINT_RADIUS = 12;
 
 Map mMap;
 PGraphics mGlyph;
@@ -26,10 +26,10 @@ void draw() {
   background(200);
   mMap.draw(0, 0);
 
-  fill(200, 100, 100);
+  fill(32);
   noStroke();
   for (int i=0; i<mPoints.size(); i++) {
-    ellipse(mPoints.get(i).x, mPoints.get(i).y, 2*POINT_RADIUS, 2*POINT_RADIUS);
+    ellipse(mPoints.get(i).x, mPoints.get(i).y, POINT_RADIUS, POINT_RADIUS);
   }
 
   image(mGlyph, -(mGlyph.width-width)/2, -(mGlyph.height-height)/2);
@@ -60,15 +60,15 @@ void generateGlyph() {
     tPoints[3] = somePoints.get((int)random(somePoints.size()));
 
     float mR = random(1); 
-    if (mR < 0.25) {
+    if (mR < 0.4) {
       mGlyph.bezier(tPoints[0].x, tPoints[0].y, 
         tPoints[1].x, tPoints[1].y, 
         tPoints[2].x, tPoints[2].y, 
         tPoints[3].x, tPoints[3].y);
-    } else if (mR < 0.5) {
+    } else if (mR < 0.6) {
       mGlyph.line(tPoints[0].x, tPoints[0].y, tPoints[1].x, tPoints[1].y);
       mGlyph.line(tPoints[2].x, tPoints[2].y, tPoints[1].x, tPoints[1].y);
-    } else if (mR < 0.75) {
+    } else if (mR < 0.8) {
       mGlyph.ellipse(tPoints[0].x, tPoints[0].y, tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2);
     } else {
       float arcAngleStart = PVector.angleBetween(tPoints[0], tPoints[3]);
