@@ -36,9 +36,9 @@ def countSimilarities(mCounts, mSimilarities):
   for title,counts in mCounts.iteritems():
     for word,count in counts.iteritems():
       if word in mSimilarities:
-        mSimilarities[word].append(title[:16])
+        mSimilarities[word].append(title[:12])
       else:
-        mSimilarities[word] = [title[:16]]
+        mSimilarities[word] = [title[:12]]
 
 def printSimilarities(mSimilarities, threshold):
   print("similarities")
