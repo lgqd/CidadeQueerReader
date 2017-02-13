@@ -11,6 +11,8 @@ DATA_DIR = "./txts"
 singleCounts = {}
 doubleCounts = {}
 tripleCounts = {}
+doubleSimilarities = {}
+tripleSimilarities = {}
 
 def triowise(iterable):
   a, b, c = tee(iterable, 3)
@@ -29,6 +31,21 @@ def printCounts(mCounts, limit):
         print ("  "+w+": "+str(c)).decode('utf8')
       if i >= limit:
         break
+
+def countSimilarities(mCounts, mSimilarities):
+  for title,counts in mCounts.iteritems():
+    for word,count in counts.iteritems():
+      if word in mSimilarities:
+        mSimilarities[word].append(title[:16])
+      else:
+        mSimilarities[word] = [title[:16]]
+
+def printSimilarities(mSimilarities, threshold):
+  print("similarities")
+  sorted_similarities = sorted(mSimilarities, key=lambda k:len(mSimilarities[k]), reverse=True)
+  for i,k in enumerate(sorted_similarities):
+    if len(mSimilarities[k]) > threshold:
+      print ("  "+k+": "+str(mSimilarities[k]))
 
 if __name__ == "__main__":
   for filename in [f for f in sorted(listdir(DATA_DIR)) if f.endswith(".txt")]:
@@ -63,6 +80,11 @@ if __name__ == "__main__":
 
     txt.close()
 
-  printCounts(singleCounts, 40)
-  printCounts(doubleCounts, 10)
-  printCounts(tripleCounts, 10)
+  countSimilarities(doubleCounts, doubleSimilarities)
+  countSimilarities(tripleCounts, tripleSimilarities)
+
+  #printCounts(singleCounts, 40)
+  #printCounts(doubleCounts, 10)
+  #printCounts(tripleCounts, 10)
+  printSimilarities(doubleSimilarities, 2)
+  printSimilarities(tripleSimilarities, 1)
