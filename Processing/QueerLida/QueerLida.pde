@@ -1,9 +1,9 @@
 import processing.svg.*;
 import java.nio.file.*;
 
-int POINT_RADIUS = 12;
-int POINT_COLOR = color(32);
-int GLYPH_WEIGHT = 2;
+int POINT_RADIUS = 8;
+int POINT_COLOR = color(250, 0, 0);
+int GLYPH_WEIGHT = 3;
 int GLYPH_COLOR = color(64, 64);
 int PAGE_LIMIT = 149;
 String SVG_FRAME_FILE = "out/current.svg";
@@ -13,6 +13,7 @@ PGraphics glyphGraphic, pointsGraphic;
 PShape glyphShape;
 ArrayList<PVector> mPoints;
 int currentPage;
+boolean drawPoints = true;
 
 void setup() {
   size(546, 798);
@@ -28,7 +29,9 @@ void setup() {
 void draw() {
   background(200);
   image(pageImage, 0, 0);
-  image(pointsGraphic, 0, 0);
+  if (drawPoints) {
+    image(pointsGraphic, 0, 0);
+  }
   shape(glyphShape, 0, 0);
 }
 
@@ -126,6 +129,8 @@ void keyReleased() {
       }
       generateGlyph();
     }
+  } else if (key == 'p') {
+    drawPoints = !drawPoints;
   } else if (key == ' ') {
     saveSVG();
   }

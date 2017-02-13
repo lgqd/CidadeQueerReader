@@ -1,4 +1,9 @@
 int POINT_RADIUS = 12;
+int POINT_COLOR = color(32);
+int GLYPH_WEIGHT = 8;
+int GLYPH_COLOR = color(0);
+//int GLYPH_COLOR = color(255);
+//int GLYPH_COLOR = color(1, 69, 79);
 
 Map mMap;
 PGraphics mGlyph;
@@ -26,7 +31,7 @@ void draw() {
   background(200);
   mMap.draw(0, 0);
 
-  fill(32);
+  fill(POINT_COLOR);
   noStroke();
   for (int i=0; i<mPoints.size(); i++) {
     ellipse(mPoints.get(i).x, mPoints.get(i).y, POINT_RADIUS, POINT_RADIUS);
@@ -42,8 +47,8 @@ void generateGlyph() {
   mGlyph.translate((mGlyph.width-width)/2, (mGlyph.height-height)/2);
   mGlyph.background(255, 0);
   mGlyph.noFill();
-  mGlyph.stroke(0);
-  mGlyph.strokeWeight(8);
+  mGlyph.stroke(GLYPH_COLOR);
+  mGlyph.strokeWeight(GLYPH_WEIGHT);
 
   ArrayList<PVector> somePoints = new ArrayList<PVector>();
   for (int i=0; i<10 && mPoints.size()>0; i++) {
