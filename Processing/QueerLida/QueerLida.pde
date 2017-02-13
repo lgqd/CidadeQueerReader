@@ -133,6 +133,7 @@ void keyReleased() {
     drawPoints = !drawPoints;
   } else if (key == ' ') {
     saveSVG();
+    savePoints();
   }
 }
 
@@ -145,6 +146,15 @@ void saveSVG() {
   catch(Exception e) {
     println(e);
   }
+}
+
+void savePoints() {
+  String[] s = new String[1];
+  s[0] = "";
+  for (int i=0; i<mPoints.size (); i++) {
+    s[0] += "mPoints.add(new PVector("+mPoints.get(i).x+", "+mPoints.get(i).y+"));\n";
+  }
+  saveStrings(dataPath("out/queer_leitora"+pad(currentPage+1)+"_"+frameCount+".txt"), s);
 }
 
 String pad(int i, int l) {
