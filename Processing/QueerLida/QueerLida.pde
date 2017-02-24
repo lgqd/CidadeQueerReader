@@ -2,27 +2,41 @@ import processing.svg.*;
 import java.nio.file.*;
 
 int POINT_RADIUS = 8;
-int POINT_COLOR = color(250, 0, 0);
+int POINT_COLOR = color(255, 0, 0);
 int GLYPH_WEIGHT = 3;
 int GLYPH_COLOR = color(64, 64);
 int PAGE_LIMIT = 149;
-String SVG_FRAME_FILE = "out/current.svg";
+String GLYPH_LINES_FILE = "out/lines.svg";
+String GLYPH_POINTS_FILE = "out/points.svg";
 
 PImage pageImage;
-PGraphics glyphGraphic, pointsGraphic;
-PShape glyphShape;
+PGraphics pointsGraphic, glyphLines, glyphPoints;
+PShape glyphLinesShape, glyphPointsShape;
 ArrayList<PVector> mPoints;
+ArrayList<String> mPages;
 int currentPage;
 boolean drawPoints = true;
 
 void setup() {
-  size(546, 798);
+  size(493, 740);
 
   mPoints = new ArrayList<PVector>();
+  mPages = new ArrayList<String>();
+
+  File[] fs = (new File(dataPath(""))).listFiles();
+  for (int i=0; i<fs.length; i++) {
+    if (fs[i].isFile() && fs[i].getName().endsWith(".jpg")) {
+      if (fs[i].getName().startsWith("x")) {
+        mPages.add(fs[i].getName());
+      }
+    }
+  }
+
   currentPage = 0;
-  pageImage = loadImage(dataPath("queer_leitora"+pad(currentPage)+".jpg"));
+  pageImage = loadImage(dataPath(mPages.get(currentPage)));
   pointsGraphic = createGraphics(width, height);
-  glyphGraphic = createGraphics(width, height, SVG, dataPath(SVG_FRAME_FILE));
+  glyphPoints = createGraphics(width, height, SVG, dataPath(GLYPH_POINTS_FILE));
+  glyphLines = createGraphics(width, height, SVG, dataPath(GLYPH_LINES_FILE));
   generateGlyph();
 }
 
@@ -32,7 +46,8 @@ void draw() {
   if (drawPoints) {
     image(pointsGraphic, 0, 0);
   }
-  shape(glyphShape, 0, 0);
+  shape(glyphPointsShape, 0, 0);
+  shape(glyphLinesShape, 0, 0);
 }
 
 void drawPointsOnGraphic() {
@@ -47,11 +62,38 @@ void drawPointsOnGraphic() {
 }
 
 void generateGlyph() {
-  glyphGraphic.beginDraw();
-  glyphGraphic.smooth();
-  glyphGraphic.noFill();
-  glyphGraphic.stroke(GLYPH_COLOR);
-  glyphGraphic.strokeWeight(GLYPH_WEIGHT);
+  generatePoints();
+  generateLines();
+}
+
+void generatePoints() {
+  glyphPoints.beginDraw();
+  glyphPoints.smooth();
+  glyphPoints.noFill();
+  glyphPoints.stroke(GLYPH_COLOR);
+
+  glyphPoints.point(0, 0);
+  glyphPoints.point(width, height);
+
+  glyphPoints.fill(GLYPH_COLOR);
+  glyphPoints.noStroke();
+  for (int i=0; i<mPoints.size (); i++) {
+    glyphPoints.ellipse(mPoints.get(i).x, mPoints.get(i).y, POINT_RADIUS, POINT_RADIUS);
+  }
+
+  glyphPoints.endDraw();
+  glyphPointsShape = loadShape(dataPath(GLYPH_POINTS_FILE));
+}
+
+void generateLines() {
+  glyphLines.beginDraw();
+  glyphLines.smooth();
+  glyphLines.noFill();
+  glyphLines.stroke(GLYPH_COLOR);
+  glyphLines.strokeWeight(GLYPH_WEIGHT);
+
+  glyphLines.point(0, 0);
+  glyphLines.point(width, height);
 
   ArrayList<PVector> somePoints = new ArrayList<PVector>();
   for (int i=0; i<10 && mPoints.size ()>0; i++) {
@@ -69,26 +111,26 @@ void generateGlyph() {
 
     float mR = random(1); 
     if (mR < 0.4) {
-      glyphGraphic.bezier(tPoints[0].x, tPoints[0].y, 
+      glyphLines.bezier(tPoints[0].x, tPoints[0].y, 
         tPoints[1].x, tPoints[1].y, 
         tPoints[2].x, tPoints[2].y, 
         tPoints[3].x, tPoints[3].y);
     } else if (mR < 0.6) {
-      glyphGraphic.line(tPoints[0].x, tPoints[0].y, tPoints[1].x, tPoints[1].y);
-      glyphGraphic.line(tPoints[2].x, tPoints[2].y, tPoints[1].x, tPoints[1].y);
+      glyphLines.line(tPoints[0].x, tPoints[0].y, tPoints[1].x, tPoints[1].y);
+      glyphLines.line(tPoints[2].x, tPoints[2].y, tPoints[1].x, tPoints[1].y);
     } else if (mR < 0.8) {
-      glyphGraphic.ellipse(tPoints[0].x, tPoints[0].y, tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2);
+      glyphLines.ellipse(tPoints[0].x, tPoints[0].y, tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2);
     } else {
       float arcAngleStart = PVector.angleBetween(tPoints[0], tPoints[3]);
       float arcAngleStop = arcAngleStart + random(PI/4, PI);
-      glyphGraphic.arc(tPoints[0].x, tPoints[0].y, 
+      glyphLines.arc(tPoints[0].x, tPoints[0].y, 
         tPoints[0].dist(tPoints[1])/2, tPoints[0].dist(tPoints[2])/2, 
         arcAngleStart, arcAngleStop);
     }
   }
 
-  glyphGraphic.endDraw();
-  glyphShape = loadShape(dataPath(SVG_FRAME_FILE));
+  glyphLines.endDraw();
+  glyphLinesShape = loadShape(dataPath(GLYPH_LINES_FILE));
 }
 
 void mouseReleased() {
@@ -105,22 +147,25 @@ void mouseReleased() {
 }
 
 void clearGlyph() {
-  glyphGraphic.beginDraw();
-  glyphGraphic.endDraw();
-  glyphShape = loadShape(dataPath(SVG_FRAME_FILE));
+  glyphPoints.beginDraw();
+  glyphPoints.endDraw();
+  glyphPointsShape = loadShape(dataPath(GLYPH_POINTS_FILE));
+  glyphLines.beginDraw();
+  glyphLines.endDraw();
+  glyphLinesShape = loadShape(dataPath(GLYPH_LINES_FILE));
 }
 
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == UP) {
-      currentPage = min((currentPage + 1), (PAGE_LIMIT - 1));
-      pageImage = loadImage(dataPath("queer_leitora"+pad(currentPage)+".jpg"));
+      currentPage = min((currentPage + 1), mPages.size() - 1);
+      pageImage = loadImage(dataPath(mPages.get(currentPage)));
       mPoints.clear();
       drawPointsOnGraphic();
       clearGlyph();
     } else if (keyCode == DOWN) {
       currentPage = max((currentPage - 1), 0);
-      pageImage = loadImage(dataPath("queer_leitora"+pad(currentPage)+".jpg"));
+      pageImage = loadImage(dataPath(mPages.get(currentPage)));
       mPoints.clear();
       drawPointsOnGraphic();
       clearGlyph();
@@ -133,28 +178,22 @@ void keyReleased() {
     drawPoints = !drawPoints;
   } else if (key == ' ') {
     saveSVG();
-    savePoints();
   }
 }
 
 void saveSVG() {
-  Path src = Paths.get(dataPath(SVG_FRAME_FILE));
-  Path dst = Paths.get(dataPath("out/queer_leitora"+pad(currentPage+1)+"_"+frameCount+".svg"));
+  String outFile = "out/"+mPages.get(currentPage).replace(".jpg", "")+"_X!X!_"+frameCount+".svg";
+  Path pointsSrc = Paths.get(dataPath(GLYPH_POINTS_FILE));
+  Path pointsDst = Paths.get(dataPath(outFile.replace("X!X!", "points")));
+  Path linesSrc = Paths.get(dataPath(GLYPH_LINES_FILE));
+  Path linesDst = Paths.get(dataPath(outFile.replace("X!X!", "lines")));
   try {
-    Files.copy(src, dst);
+    Files.copy(pointsSrc, pointsDst);
+    Files.copy(linesSrc, linesDst);
   } 
   catch(Exception e) {
     println(e);
   }
-}
-
-void savePoints() {
-  String[] s = new String[1];
-  s[0] = "";
-  for (int i=0; i<mPoints.size (); i++) {
-    s[0] += "mPoints.add(new PVector("+mPoints.get(i).x+", "+mPoints.get(i).y+"));\n";
-  }
-  saveStrings(dataPath("out/queer_leitora"+pad(currentPage+1)+"_"+frameCount+".txt"), s);
 }
 
 String pad(int i, int l) {
