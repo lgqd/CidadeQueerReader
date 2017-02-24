@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     with open(fullPath) as txt:
       for line in txt.read().splitlines():
-        line = sub(r'[.!?@()+-]+', '', line)
+        line = sub(r'[,;.!?@()+-]+', '', line)
 
         for (w0,w1,w2) in triowise(line.split()):
           singlet = w0.lower()
@@ -83,8 +83,8 @@ if __name__ == "__main__":
   countSimilarities(doubleCounts, doubleSimilarities)
   countSimilarities(tripleCounts, tripleSimilarities)
 
-  #printCounts(singleCounts, 40)
-  #printCounts(doubleCounts, 10)
-  #printCounts(tripleCounts, 10)
+  printCounts(singleCounts, 40)
+  printCounts(doubleCounts, 10)
+  printCounts(tripleCounts, 10)
   printSimilarities(doubleSimilarities, 2)
   printSimilarities(tripleSimilarities, 1)
