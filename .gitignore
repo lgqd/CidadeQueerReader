@@ -4,4 +4,4 @@ docs/
 data/out
 data
 !bin/data
-Python/**/out.txt
+Python/**/out
