@@ -40,6 +40,7 @@
     <script>
       var map;
       var markers = [];
+      var mPoints = [];
       var SP = {lat: -23.58010, lng: -46.62991};
       var DISTANCE_THRESHOLD = 10;
 
@@ -84,6 +85,23 @@
         });
       }
 
+      function fromLatLngToPoint(markers, points) {
+        var projection = map.getProjection();
+        var bounds = map.getBounds();
+        var topRight = projection.fromLatLngToPoint(bounds.getNorthEast());
+        var bottomLeft = projection.fromLatLngToPoint(bounds.getSouthWest());
+        var scale = Math.pow(2, map.getZoom());
+
+        points.length = 0;
+        for(var i=0; i<markers.length; i++) {
+          var thisPoint = projection.fromLatLngToPoint(markers[i].getPosition());
+          var xy = {};
+          xy['x'] = Math.floor((thisPoint.x - bottomLeft.x) * scale);
+          xy['y'] = Math.floor((thisPoint.y - topRight.y) * scale);
+          points.push(xy);
+        }
+      }
+
       function drawGliph() {
         var bounds = new google.maps.LatLngBounds();
         for(var i=0; i<markers.length; i++) {
@@ -99,6 +117,7 @@
           if(this.getZoom() > 15) {
             this.setZoom(15);
           }
+          fromLatLngToPoint(markers, mPoints);
         });
         map.fitBounds(bounds);
       }
