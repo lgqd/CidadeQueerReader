@@ -40,12 +40,12 @@
     <script>
       var map;
       var markers = [];
+      var SP = {lat: -23.58010, lng: -46.62991};
       var DISTANCE_THRESHOLD = 10;
 
       function initMap() {
-        var sp = {lat: -23.551, lng: -46.633};
         map = new google.maps.Map(document.getElementById('map'), {
-          center: sp,
+          center: SP,
           zoom: 12,
           styles: [
             {
@@ -70,7 +70,7 @@
           function deleteMarker(markerToDelete) {
             return function(event) {
               markerToDelete.setMap(null);
-              for (var i=0; i<markers.length; i++) {
+              for(var i=0; i<markers.length; i++) {
                 if(markers[i].getMap() == null) {
                   markers.splice(i, 1);
                   return;
@@ -85,18 +85,20 @@
       }
 
       function drawGliph() {
-        if (markers.length < 1) return;
-
         var bounds = new google.maps.LatLngBounds();
-        for (var i=0; i<markers.length; i++) {
+        for(var i=0; i<markers.length; i++) {
           bounds.extend(markers[i].getPosition());
         }
 
         google.maps.event.addListenerOnce(map, 'bounds_changed', function(event) {
-          if (this.getZoom() > 15) {
+          if(markers.length < 1) {
+            this.setCenter(SP);
+            this.setZoom(12);
+          }
+
+          if(this.getZoom() > 15) {
             this.setZoom(15);
           }
-          // 
         });
         map.fitBounds(bounds);
       }
