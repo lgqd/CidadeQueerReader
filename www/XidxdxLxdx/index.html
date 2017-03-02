@@ -166,13 +166,52 @@
         }
       }
 
+      function drawGlyphs(points) {
+        var somePoints = [];
+        for(var i=0; i<10 && points.length>0; i++) {
+          somePoints.push(points[Math.floor(points.length * Math.random())]);
+        }
+
+        var numberOfGlyphs = Math.floor(5 + 4 * Math.random());
+
+        for(var i=0; i<numberOfGlyphs; i++) {
+          var tPoints = [];
+          for(var j=0; j<4; j++) {
+            tPoints.push(somePoints[Math.floor(somePoints.length * Math.random())]);
+          }
+
+          var mR = Math.random();
+          if (mR < 0.4) {
+            drawBezier('glyph-svg',
+                       tPoints[0].x, tPoints[0].y,
+                       tPoints[1].x, tPoints[1].y,
+                       tPoints[2].x, tPoints[2].y,
+                       tPoints[3].x, tPoints[3].y);
+          } else if (mR < 0.6) {
+            drawLine('glyph-svg',
+                     tPoints[0].x, tPoints[0].y,
+                     tPoints[1].x, tPoints[1].y);
+          } else if (mR < 0.8) {
+            drawEllipse('glyph-svg',
+                        tPoints[0].x, tPoints[0].y,
+                        Math.abs(tPoints[0].x - tPoints[1].x),
+                        Math.abs(tPoints[0].y - tPoints[2].y));
+          } else {
+            drawArc('glyph-svg',
+                    tPoints[0].x, tPoints[0].y,
+                    tPoints[1].x, tPoints[1].y,
+                    tPoints[3].x, tPoints[3].y);
+          }
+        }
+      }
+
       function clearGlyph() {
         document.getElementById("clear-button").style['display'] = 'none';
         document.getElementById("glyph-svg").style['pointer-events'] = 'none';
         document.getElementById("glyph-svg").innerHTML = '';
       }
 
-      function drawGlyph() {
+      function generateGlyph() {
         document.getElementById("glyph-svg").style['pointer-events'] = 'auto';
         document.getElementById("clear-button").style['display'] = 'block';
 
@@ -191,6 +230,8 @@
             this.setZoom(15);
           }
           fromLatLngToPoint(markers, mPoints);
+          drawGlyphs(mPoints);
+
         });
         map.fitBounds(bounds);
       }
@@ -210,7 +251,7 @@
   </head>
   <body>
     <div id="floating-panel">
-      <div id="draw-button" class="button" onclick="drawGlyph();">XidxdxLxdx</div>
+      <div id="draw-button" class="button" onclick="generateGlyph();">XidxdxLxdx</div>
       <div id="clear-button" class="button hidden" onclick="clearGlyph();">&#8709;</div>
     </div>
     <div id="map"></div>
