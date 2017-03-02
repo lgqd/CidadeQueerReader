@@ -8,6 +8,16 @@
       #map {
         height: 100%;
       }
+      #glyph-svg {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 4;
+        pointer-events: none;
+      }
       html, body {
         height: 100%;
         margin: 0;
@@ -35,6 +45,9 @@
       .button:active {
         background-color: #ddd;
       }
+      .hidden {
+        display: none;
+      }
     </style>
 
     <script>
@@ -43,8 +56,18 @@
       var mPoints = [];
       var SP = {lat: -23.58010, lng: -46.62991};
       var DISTANCE_THRESHOLD = 10;
+      var GLYPH_STYLE = "fill-opacity:0;stroke:#005A64;stroke-width:8";
+      var MARKER_ICON;
 
       function initMap() {
+        MARKER_ICON = {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: '#005A64',
+          fillOpacity: 1,
+          strokeOpacity: 0,
+          scale: 6
+        };
+
         map = new google.maps.Map(document.getElementById('map'), {
           center: SP,
           zoom: 12,
@@ -65,7 +88,8 @@
 
           var marker = new google.maps.Marker({
             position: cPos,
-            map: map
+            map: map,
+            icon: MARKER_ICON
           });
 
           function deleteMarker(markerToDelete) {
@@ -85,6 +109,46 @@
         });
       }
 
+      function drawEllipse(svgId, cx, cy, rx, ry) {
+        var tEllipse = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+        tEllipse.setAttributeNS(null, "cx", cx);
+        tEllipse.setAttributeNS(null, "cy", cy);
+        tEllipse.setAttributeNS(null, "rx", rx);
+        tEllipse.setAttributeNS(null, "ry", ry);
+        tEllipse.setAttributeNS(null, "style", GLYPH_STYLE);
+        document.getElementById(svgId).appendChild(tEllipse);
+      }
+
+      function drawLine(svgId, x1, y1, x2, y2) {
+        var tLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        tLine.setAttributeNS(null, "x1", x1);
+        tLine.setAttributeNS(null, "y1", y1);
+        tLine.setAttributeNS(null, "x2", x2);
+        tLine.setAttributeNS(null, "y2", y2);
+        tLine.setAttributeNS(null, "style", GLYPH_STYLE);
+        document.getElementById(svgId).appendChild(tLine);
+      }
+
+      function drawBezier(svgId, x1, y1, x2, y2, x3, y3, x4, y4) {
+        var tPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        var d = "M"+x1+" "+y1+" C "+x2+" "+y2+", "+x3+" "+y3+", "+x4+" "+y4;
+        tPath.setAttributeNS(null, "d", d);
+        tPath.setAttributeNS(null, "style", GLYPH_STYLE);
+        document.getElementById(svgId).appendChild(tPath);
+      }
+
+      function drawArc(svgId, cx, cy, sx, sy, ex, ey) {
+        var tArc = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        var fSx = 2 * cx - sx;
+        var fSy = sy;
+        var fEx = 2 * cx - ex;
+        var fEy = ey;
+        var d = "M"+fSx+" "+fSy+" A "+Math.abs(cx-sx)+" "+Math.abs(cy-sy)+" 0 0 0 "+fEx+" "+fEy;
+        tArc.setAttributeNS(null, "d", d);
+        tArc.setAttributeNS(null, "style", GLYPH_STYLE);
+        document.getElementById(svgId).appendChild(tArc);
+      }
+
       function fromLatLngToPoint(markers, points) {
         var projection = map.getProjection();
         var bounds = map.getBounds();
@@ -102,7 +166,16 @@
         }
       }
 
-      function drawGliph() {
+      function clearGlyph() {
+        document.getElementById("clear-button").style['display'] = 'none';
+        document.getElementById("glyph-svg").style['pointer-events'] = 'none';
+        document.getElementById("glyph-svg").innerHTML = '';
+      }
+
+      function drawGlyph() {
+        document.getElementById("glyph-svg").style['pointer-events'] = 'auto';
+        document.getElementById("clear-button").style['display'] = 'block';
+
         var bounds = new google.maps.LatLngBounds();
         for(var i=0; i<markers.length; i++) {
           bounds.extend(markers[i].getPosition());
@@ -122,13 +195,26 @@
         map.fitBounds(bounds);
       }
 
+      function encodeGlyph() {
+        var svg = document.getElementById("glyph-svg").innerHTML;
+        var b64 = btoa(svg);
+
+        /*
+        // http://stackoverflow.com/questions/2483919/how-to-save-svg-canvas-to-local-filesystem
+        $("body").append($("<img src='data:image/svg+xml;base64,\n"+b64+"' alt='file.svg'/>"));
+        $("body").append($("<a href-lang='image/svg+xml' href='data:image/svg+xml;base64,\n"+b64+"' title='file.svg'>Download</a>"));
+        */
+      }
+
     </script>
   </head>
   <body>
     <div id="floating-panel">
-      <div class="button" onclick="drawGliph();">XidxdxLxdx</div>
+      <div id="draw-button" class="button" onclick="drawGlyph();">XidxdxLxdx</div>
+      <div id="clear-button" class="button hidden" onclick="clearGlyph();">&#8709;</div>
     </div>
     <div id="map"></div>
+    <svg id="glyph-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3l6PD1gs75rjnKmAn8mk6m47zcjHbpDU&callback=initMap" async defer></script>
   </body>
 </html>
