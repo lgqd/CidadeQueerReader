@@ -56,7 +56,7 @@
       var mPoints = [];
       var SP = {lat: -23.58010, lng: -46.62991};
       var DISTANCE_THRESHOLD = 10;
-      var GLYPH_STYLE = "fill-opacity:0;stroke:#005A64;stroke-width:8";
+      var GLYPH_STYLE = "fill-opacity:0;stroke:#005A64;stroke-width:6";
       var MARKER_ICON;
 
       function initMap() {
@@ -143,7 +143,7 @@
         var fSy = sy;
         var fEx = 2 * cx - ex;
         var fEy = ey;
-        var d = "M"+fSx+" "+fSy+" A "+Math.abs(cx-sx)+" "+Math.abs(cy-sy)+" 0 0 0 "+fEx+" "+fEy;
+        var d = "M"+fSx+" "+fSy+" A "+Math.abs(cx-sx)/2+" "+Math.abs(cy-sy)/2+" 0 0 0 "+fEx+" "+fEy;
         tArc.setAttributeNS(null, "d", d);
         tArc.setAttributeNS(null, "style", GLYPH_STYLE);
         document.getElementById(svgId).appendChild(tArc);
@@ -167,8 +167,10 @@
       }
 
       function drawGlyphs(points) {
+        if(points.length < 1) return;
+
         var somePoints = [];
-        for(var i=0; i<10 && points.length>0; i++) {
+        for(var i=0; i<10; i++) {
           somePoints.push(points[Math.floor(points.length * Math.random())]);
         }
 
@@ -194,8 +196,8 @@
           } else if (mR < 0.8) {
             drawEllipse('glyph-svg',
                         tPoints[0].x, tPoints[0].y,
-                        Math.abs(tPoints[0].x - tPoints[1].x),
-                        Math.abs(tPoints[0].y - tPoints[2].y));
+                        Math.abs(tPoints[0].x - tPoints[1].x)/2,
+                        Math.abs(tPoints[0].y - tPoints[2].y)/2);
           } else {
             drawArc('glyph-svg',
                     tPoints[0].x, tPoints[0].y,
@@ -209,11 +211,15 @@
         document.getElementById("clear-button").style['display'] = 'none';
         document.getElementById("glyph-svg").style['pointer-events'] = 'none';
         document.getElementById("glyph-svg").innerHTML = '';
+        google.maps.event.clearListeners(map, 'bounds_changed');
       }
 
       function generateGlyph() {
-        document.getElementById("glyph-svg").style['pointer-events'] = 'auto';
         document.getElementById("clear-button").style['display'] = 'block';
+        document.getElementById("glyph-svg").style['pointer-events'] = 'auto';
+        document.getElementById("glyph-svg").innerHTML = '';
+
+        var originalBounds = map.getBounds();
 
         var bounds = new google.maps.LatLngBounds();
         for(var i=0; i<markers.length; i++) {
@@ -231,9 +237,13 @@
           }
           fromLatLngToPoint(markers, mPoints);
           drawGlyphs(mPoints);
-
         });
+
         map.fitBounds(bounds);
+        if(originalBounds.equals(map.getBounds())) {
+          fromLatLngToPoint(markers, mPoints);
+          drawGlyphs(mPoints);
+        }
       }
 
       function encodeGlyph() {
