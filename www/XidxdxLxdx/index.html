@@ -1,6 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
 
     <title>XidxdxLxdx</title>
 
@@ -47,6 +48,17 @@
       }
       .hidden {
         display: none;
+      }
+      #clear-icon {
+        font-size: 2em;
+        line-height: 1em;
+        font-weight: bold;
+      }
+      #download-link {
+        color: #000;
+      }
+      #download-link:visited {
+        color: #000;
       }
     </style>
 
@@ -188,10 +200,18 @@
                         Math.abs(tPoints[0].y - tPoints[2].y)/2);
           }
         }
+
+        // http://stackoverflow.com/questions/2483919/how-to-save-svg-canvas-to-local-filesystem
+        var svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg">';
+        var b64 = btoa(svg+document.getElementById("glyph-svg").innerHTML+"</svg>");
+        var href = "data:image/svg+xml;base64,\n"+b64;
+        document.getElementById("download-link").setAttribute("href", href);
       }
 
       function clearGlyph() {
         document.getElementById("clear-button").style['display'] = 'none';
+        document.getElementById("download-button").style['display'] = 'none';
+        document.getElementById("draw-icon").setAttribute("class", "fa fa-pencil fa-2x");
         document.getElementById("glyph-svg").style['pointer-events'] = 'none';
         document.getElementById("glyph-svg").innerHTML = '';
         google.maps.event.clearListeners(map, 'bounds_changed');
@@ -199,6 +219,8 @@
 
       function generateGlyph() {
         document.getElementById("clear-button").style['display'] = 'block';
+        document.getElementById("download-button").style['display'] = 'block';
+        document.getElementById("draw-icon").setAttribute("class", "fa fa-repeat fa-2x");
         document.getElementById("glyph-svg").style['pointer-events'] = 'auto';
         document.getElementById("glyph-svg").innerHTML = '';
 
@@ -229,23 +251,21 @@
         }
       }
 
-      function encodeGlyph() {
-        var svg = document.getElementById("glyph-svg").innerHTML;
-        var b64 = btoa(svg);
-
-        /*
-        // http://stackoverflow.com/questions/2483919/how-to-save-svg-canvas-to-local-filesystem
-        $("body").append($("<img src='data:image/svg+xml;base64,\n"+b64+"' alt='file.svg'/>"));
-        $("body").append($("<a href-lang='image/svg+xml' href='data:image/svg+xml;base64,\n"+b64+"' title='file.svg'>Download</a>"));
-        */
-      }
-
     </script>
   </head>
   <body>
     <div id="floating-panel">
-      <div id="draw-button" class="button" onclick="generateGlyph();">XidxdxLxdx</div>
-      <div id="clear-button" class="button hidden" onclick="clearGlyph();">&#8709;</div>
+      <div id="draw-button" class="button" onclick="generateGlyph();">
+        <i id="draw-icon" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+      </div>
+      <div id="clear-button" class="button hidden" onclick="clearGlyph();">
+        <b id="clear-icon" aria-hidden="true">&#8709;</b>
+      </div>
+      <a target="_blank" id="download-link" href-lang="image/svg+xml" href="" title="glyph.svg">
+        <div id="download-button" class="button hidden">
+          <i id="download-icon" class="fa fa-download fa-2x" aria-hidden="true"></i>
+        </div>
+      </a>
     </div>
     <div id="map"></div>
     <svg id="glyph-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
