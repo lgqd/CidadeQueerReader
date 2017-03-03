@@ -137,18 +137,6 @@
         document.getElementById(svgId).appendChild(tPath);
       }
 
-      function drawArc(svgId, cx, cy, sx, sy, ex, ey) {
-        var tArc = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        var fSx = 2 * cx - sx;
-        var fSy = sy;
-        var fEx = 2 * cx - ex;
-        var fEy = ey;
-        var d = "M"+fSx+" "+fSy+" A "+Math.abs(cx-sx)/2+" "+Math.abs(cy-sy)/2+" 0 0 0 "+fEx+" "+fEy;
-        tArc.setAttributeNS(null, "d", d);
-        tArc.setAttributeNS(null, "style", GLYPH_STYLE);
-        document.getElementById(svgId).appendChild(tArc);
-      }
-
       function fromLatLngToPoint(markers, points) {
         var projection = map.getProjection();
         var bounds = map.getBounds();
@@ -174,7 +162,7 @@
           somePoints.push(points[Math.floor(points.length * Math.random())]);
         }
 
-        var numberOfGlyphs = Math.floor(5 + 4 * Math.random());
+        var numberOfGlyphs = Math.floor(5 + 2 * Math.random());
 
         for(var i=0; i<numberOfGlyphs; i++) {
           var tPoints = [];
@@ -183,26 +171,21 @@
           }
 
           var mR = Math.random();
-          if (mR < 0.4) {
+          if (mR < 0.6) {
             drawBezier('glyph-svg',
                        tPoints[0].x, tPoints[0].y,
                        tPoints[1].x, tPoints[1].y,
                        tPoints[2].x, tPoints[2].y,
                        tPoints[3].x, tPoints[3].y);
-          } else if (mR < 0.6) {
+          } else if (mR < 0.8) {
             drawLine('glyph-svg',
                      tPoints[0].x, tPoints[0].y,
                      tPoints[1].x, tPoints[1].y);
-          } else if (mR < 0.8) {
+          } else {
             drawEllipse('glyph-svg',
                         tPoints[0].x, tPoints[0].y,
                         Math.abs(tPoints[0].x - tPoints[1].x)/2,
                         Math.abs(tPoints[0].y - tPoints[2].y)/2);
-          } else {
-            drawArc('glyph-svg',
-                    tPoints[0].x, tPoints[0].y,
-                    tPoints[1].x, tPoints[1].y,
-                    tPoints[3].x, tPoints[3].y);
           }
         }
       }
