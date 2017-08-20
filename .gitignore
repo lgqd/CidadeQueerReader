@@ -1,7 +1,7 @@
 .DS*
 imgs/
 docs/
-data/out
-data
+Processing/**/data/out
+!data/*png
 !bin/data
 Python/**/out
