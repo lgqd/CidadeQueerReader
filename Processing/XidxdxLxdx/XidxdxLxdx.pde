@@ -7,14 +7,14 @@ int GLYPH_COLOR = color(0);
 
 Map mMap;
 PGraphics mGlyph;
-ArrayList<PVector> mPoints;
+Points mPoints;
 ArrayList<Map> mMaps;
 int currentMap;
 
 void setup() {
   size(1200, 680);
 
-  mPoints = new ArrayList<PVector>();
+  mPoints = new Points();
   mMaps = new ArrayList<Map>();
   mMaps.add(new CidadeMap("cidade.png"));
   mMaps.add(new LindaMap("linda.png"));
@@ -31,12 +31,7 @@ void draw() {
   background(200);
   mMap.draw(0, 0);
 
-  fill(POINT_COLOR);
-  noStroke();
-  for (int i=0; i<mPoints.size(); i++) {
-    ellipse(mPoints.get(i).x, mPoints.get(i).y, POINT_RADIUS, POINT_RADIUS);
-  }
-
+  mPoints.draw();
   image(mGlyph, -(mGlyph.width-width)/2, -(mGlyph.height-height)/2);
 }
 

@@ -1,5 +1,5 @@
 public interface Map {
-  void addPoints(ArrayList<PVector> _mPoints);
+  void addPoints(Points _mPoints);
   void draw(float _x, float _y);
   String name();
 }
@@ -21,7 +21,7 @@ public class BlankMap implements Map {
     return mName;
   }
 
-  public void addPoints(ArrayList<PVector> _mPoints) {
+  public void addPoints(Points _mPoints) {
     _mPoints.clear();
   }
 }
@@ -43,7 +43,7 @@ public class CidadeMap implements Map {
     return mName;
   }
 
-  public void addPoints(ArrayList<PVector> _mPoints) {
+  public void addPoints(Points _mPoints) {
     _mPoints.clear();
     _mPoints.add(new PVector(425, 32));
     _mPoints.add(new PVector(598, 190));
@@ -75,7 +75,7 @@ public class LindaMap implements Map {
     return mName;
   }
 
-  public void addPoints(ArrayList<PVector> _mPoints) {
+  public void addPoints(Points _mPoints) {
     _mPoints.clear();
     _mPoints.add(new PVector(219, 190));
     _mPoints.add(new PVector(357, 185));
@@ -109,7 +109,7 @@ public class QueerMap implements Map {
     return mName;
   }
 
-  public void addPoints(ArrayList<PVector> _mPoints) {
+  public void addPoints(Points _mPoints) {
     _mPoints.clear();
     _mPoints.add(new PVector(550, 423));
     _mPoints.add(new PVector(704, 145));
